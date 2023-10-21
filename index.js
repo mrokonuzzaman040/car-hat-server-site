@@ -93,13 +93,23 @@ async function run() {
             res.send(users);
         })
 
-        app.post('/user', async (req, res) => {
+        // add car in user cart
+        app.post('/user/cart', async (req, res) => {
             const user = req.body;
             console.log(user);
             const result = await userCollection.insertOne(user);
             res.send(result);
         });
 
+        //get single user
+        app.get('/user/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await userCollection.findOne(query);
+            res.send(result);
+        })
+
+        //update user
         app.patch('/user', async (req, res) => {
             const user = req.body;
             const filter = { email: user.email }
@@ -112,6 +122,7 @@ async function run() {
             res.send(result);
         })
 
+        //delete user
         app.delete('/user/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) };
@@ -119,18 +130,7 @@ async function run() {
             res.send(result);
         })
 
-        //add to cart
-        app.put('/addtocart/:id', async (req, res) => {
-            const id = req.params.id;
-            const filter = { email: req.body.email }
-            const updateDoc = {
-                $push: {
-                    cart: id
-                }
-            }
-            const result = await userCollection.updateOne(filter, updateDoc);
-            res.send(result);
-        })
+
 
         // Send a ping to confirm a successful connection
         // await client.db("admin").command({ ping: 1 });
